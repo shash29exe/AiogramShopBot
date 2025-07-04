@@ -12,7 +12,7 @@ class Carts(Base):
 
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), unique=True)
 
-    user_cart: Mapped[Users] = relationship(backpopulates='carts')
+    user_cart: Mapped[Users] = relationship(back_populates='carts')
 
     def __str__(self):
         return self.id
