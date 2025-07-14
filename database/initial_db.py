@@ -1,10 +1,11 @@
 from sqlalchemy import text
 
-from database.models import Carts, Users
+from database.models import Carts, Users, FinallyCarts, Categories, Products
 from database.base import Base, engine
 
 def initial_db():
     with engine.connect() as conn:
+        # conn.execute(text("DROP SCHEMA IF EXISTS public CASCADE"))
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS public"))
         conn.commit()
 
