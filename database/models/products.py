@@ -11,7 +11,7 @@ class Products(Base):
     product_name: Mapped[str] = mapped_column(String(50), unique=True)
     description: Mapped[str] = mapped_column(String(200))
     image: Mapped[str] = mapped_column(String(200))
-    price: Mapped[DECIMAL] = mapped_column(DECIMAL(7, 2))
+    price: Mapped[DECIMAL] = mapped_column(DECIMAL(12, 2))
 
     category_id: Mapped[int] = mapped_column(ForeignKey('categories.id'))
 
