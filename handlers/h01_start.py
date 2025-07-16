@@ -1,6 +1,7 @@
 from aiogram import Router
 from aiogram.types import Message, FSInputFile
 from aiogram.filters import CommandStart
+from aiogram.filters.text import Text
 
 from database.utils import db_register_user
 from keyboards.reply_kb import start_kb
@@ -24,7 +25,7 @@ async def start(message: Message):
     )
 
 
-@router.message(Text='Привет')
+@router.message(Text('Привет'))
 async def handle_start_button(message: Message):
     """
         Реакция на нажатие кнопки "Привет"
@@ -40,6 +41,8 @@ async def handle_start(message: Message):
 async def register(message: Message):
     chat_id = message.chat.id
     full_name = message.from_user.full_name
+
+    print(chat_id, full_name)
 
     if db_register_user(chat_id, full_name):
         await message.answer(text=f'Привет👋')
