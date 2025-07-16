@@ -1,7 +1,7 @@
 from sqlalchemy import text, select
 from sqlalchemy.orm import Session
 
-from database.models import Carts, Users, FinallyCarts, Categories, Products
+from database.models import Categories, Products
 from database.base import Base, engine
 
 
@@ -15,48 +15,55 @@ def initial_db():
     Base.metadata.create_all(engine)
 
     categories = ('Ноутбуки', 'Системные блоки', 'Мониторы')
-    products = (
+
+    products = [
         ('Ноутбуки', 'ASUS', 100000, 'Ноутбук ASUS ZenBook UX431FL', 'media/laptops/asus_zenbook.jpg'),
         ('Ноутбуки', 'Lenovo', 120000, 'Ноутбук Lenovo Ideapad 330', 'media/laptops/lenovo_ideapad.jpg'),
         ('Системные блоки', 'ASUS', 150000, 'Системный блок ASUS ROG Strix G15', 'media/pcs/asus_rog.jpg'),
-        ('Системные блоки', 'Lenovo', 170000, 'Системный блок Lenovo Ideapad Gaming 3', 'media/pcs/lenovo_ideapad_gaming.jpg'),
+        ('Системные блоки', 'Lenovo', 170000, 'Системный блок Lenovo Ideapad Gaming 3',
+         'media/pcs/lenovo_ideapad_gaming.jpg'),
         ('Мониторы', 'ASUS', 10000, 'Монитор ASUS VG278Q', 'media/monitors/asus_vg278q.jpg'),
         ('Мониторы', 'Lenovo', 12000, 'Монитор ASUS ROG Swift PG27AQN', 'media/monitors/asus_rog_swift.jpg'),
-    )
+    ]
 
     with Session(engine) as session:
-        category_map = {}
 
+        category_map = {}
         for name in categories:
             category = session.scalar(select(Categories).where(Categories.category_name == name))
             if not category:
                 category = Categories(category_name=name)
                 session.add(category)
                 session.flush()
-
             category_map[name] = category.id
 
         for category_name, name, price, description, image in products:
-            existing_product = session.scalar(select(Products).where(Products.product_name == name))
+            category_id = category_map.get(category_name)
+            if not category_id:
+                continue
 
+            existing_product = session.scalar(
+                select(Products).where(
+                    Products.product_name == name,
+                    Products.category_id == category_id
+                )
+            )
             if existing_product:
                 continue
 
-            category_id = category_map.get(category_name)
-            if category_id:
-                product = Products(
-                    category_id=category_id,
-                    product_name=name,
-                    price=price,
-                    description=description,
-                    image=image
-                )
+            product = Products(
+                category_id=category_id,
+                product_name=name,
+                price=price,
+                description=description,
+                image=image
+            )
+            session.add(product)
 
-                session.add(product)
+        session.commit()
 
-            session.commit()
+    print('База данных создана!')
 
 
 if __name__ == '__main__':
     initial_db()
-    print('База данных создана!')

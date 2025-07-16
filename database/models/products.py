@@ -8,7 +8,7 @@ from .categories import Categories
 class Products(Base):
     __tablename__ = 'products'
     id: Mapped[int] = mapped_column(primary_key=True)
-    product_name: Mapped[str] = mapped_column(String(50), unique=True)
+    product_name: Mapped[str] = mapped_column(String(50))
     description: Mapped[str] = mapped_column(String(200))
     image: Mapped[str] = mapped_column(String(200))
     price: Mapped[DECIMAL] = mapped_column(DECIMAL(12, 2))
