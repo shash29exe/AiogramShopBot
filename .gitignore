@@ -6,6 +6,7 @@ pycache/
 
 # ▶️ Virtual environments
 .venv/
+venv/
 .idea/
 .env
 
