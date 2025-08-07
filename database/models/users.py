@@ -8,7 +8,7 @@ class Users(Base):
     __tablename__ = 'users'
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(50))
-    telegram: Mapped[int] = mapped_column(String, unique=True)
+    telegram: Mapped[int] = mapped_column(BigInteger, unique=True)
     phone: Mapped[str] = mapped_column(String(15), nullable=True)
     language: Mapped[str] = mapped_column(String(10), default='ru')
 

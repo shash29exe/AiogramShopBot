@@ -4,6 +4,7 @@ from aiogram.filters import CommandStart
 from aiogram.filters.text import Text
 
 from database.utils import db_register_user
+from handlers.h02_contact_user import get_main_menu
 from keyboards.reply_kb import start_kb, phone_kb
 
 router = Router()
@@ -44,8 +45,9 @@ async def register(message: Message):
 
     print(message.from_user)
 
-    if db_register_user(chat_id, full_name):
+    if db_register_user(full_name, chat_id):
         await message.answer(text=f'Привет👋')
+        await get_main_menu(message)
 
     else:
         await message.answer(text='Для связи с ботом необходимо зарегистрироваться',
