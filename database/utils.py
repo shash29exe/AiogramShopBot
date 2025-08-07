@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from database.base import engine
-from database.models import Users
+from database.models import Users, Categories, FinallyCarts
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import update, select
+from sqlalchemy import update, select, func
 from database.models import Carts
 
 def get_session():
@@ -52,3 +52,34 @@ def db_create_user_cart(chat_id):
         return False
     except AttributeError:
         return False
+
+def db_get_all_categories():
+    """
+        Получение всех категорий
+    """
+
+    with get_session() as session:
+        query = select(Categories)
+        return session.scalars(query).all()
+
+def db_get_finally_price(chat_id):
+    """
+        Получение финальной цены
+    """
+
+    with get_session() as session:
+        cart = (session.query(Carts)
+                .join(Users, Carts.user_id == Users.id).filter(Users.telegram == chat_id).first())
+        if not cart:
+            return 0
+
+        product_total = (
+            session.query(func.coalesce(func.sum(FinallyCarts.final_price), 0))
+            .filter(FinallyCarts.cart_id == cart.id)
+            .scalar()
+        )
+
+        if product_total == 0:
+            return 0
+
+        return float(product_total)
