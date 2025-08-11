@@ -1,6 +1,7 @@
 from aiogram import Router, F, Bot
 from aiogram.types import Message
 
+from database.utils import db_get_last_orders
 from handlers.h02_contact_user import get_main_menu
 from keyboards.inline_kb import get_category_menu
 from keyboards.reply_kb import back_to_main_menu
@@ -42,4 +43,12 @@ async def h_history_orders(message: Message):
 
     chat_id = message.chat.id
 
+    orders = db_get_last_orders(chat_id)
+    if not orders:
+        await message.answer(text="У вас нет заказов")
+        return
 
+    text = "Ваши заказы:\n\n"
+    for order in orders:
+        text += f'{order.product_name} {order.quantity} шт. {order.final_price}₽\n'
+    await message.answer(text=text)
