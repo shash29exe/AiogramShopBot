@@ -1,9 +1,10 @@
 from sqlalchemy.orm import Session
 from database.base import engine
-from database.models import Users, Categories, FinallyCarts
+from database.models import Users, Categories, FinallyCarts, Orders
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import update, select, func
 from database.models import Carts
+
 
 def get_session():
     return Session(engine)
@@ -25,7 +26,7 @@ def db_register_user(fullname, chat_id):
         return True
 
 
-def db_update_user_phone(chat_id, phone:str):
+def db_update_user_phone(chat_id, phone: str):
     """
         Получение номера телефона
     """
@@ -53,6 +54,7 @@ def db_create_user_cart(chat_id):
     except AttributeError:
         return False
 
+
 def db_get_all_categories():
     """
         Получение всех категорий
@@ -61,6 +63,7 @@ def db_get_all_categories():
     with get_session() as session:
         query = select(Categories)
         return session.scalars(query).all()
+
 
 def db_get_finally_price(chat_id):
     """
@@ -83,3 +86,22 @@ def db_get_finally_price(chat_id):
             return 0
 
         return float(product_total)
+
+
+def db_get_last_orders(chat_id, limit=10):
+    """
+         Функция получения последних заказов
+    """
+
+    with get_session() as session:
+        orders = (
+            session.query(Orders)
+            .join(Carts, Orders.cart_id == Carts.id)
+            .join(Users, Carts.user_id == Users.id)
+            .filter(Users.telegram == chat_id)
+            .order_by(Orders.id.desc())
+            .limit(limit)
+            .all()
+        )
+
+        return orders
