@@ -29,14 +29,11 @@ async def h_main_menu(message: Message, bot: Bot):
         реакция на кнопку '🏠 Главное меню'
     """
 
-    await bot.delete_message(chat_id=message.chat.id,
-                             message_id=message.message_id)
-
-    await bot.delete_message(chat_id=message.chat.id,
-                             message_id=message.message_id-1)
-
-    await bot.delete_message(chat_id=message.chat.id,
-                             message_id=message.message_id-2)
+    for delete_count in range(3):
+        await bot.delete_message(
+            chat_id=message.chat.id,
+            message_id=message.message_id - delete_count
+        )
 
     await get_main_menu(message)
 
