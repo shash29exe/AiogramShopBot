@@ -3,11 +3,11 @@ from sqlalchemy.orm import Session
 
 from database.models import Categories, Products
 from database.base import Base, engine
-
+from database.models import Orders
 
 def initial_db():
     with engine.connect() as conn:
-        conn.execute(text("DROP SCHEMA IF EXISTS public CASCADE"))
+        # conn.execute(text("DROP SCHEMA IF EXISTS public CASCADE"))
         conn.execute(text("CREATE SCHEMA IF NOT EXISTS public"))
         conn.commit()
 
