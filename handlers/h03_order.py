@@ -30,7 +30,13 @@ async def h_main_menu(message: Message, bot: Bot):
     """
 
     await bot.delete_message(chat_id=message.chat.id,
-                             message_id=message.message_id - 1)
+                             message_id=message.message_id)
+
+    await bot.delete_message(chat_id=message.chat.id,
+                             message_id=message.message_id-1)
+
+    await bot.delete_message(chat_id=message.chat.id,
+                             message_id=message.message_id-2)
 
     await get_main_menu(message)
 
