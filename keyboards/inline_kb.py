@@ -36,3 +36,6 @@ def show_products(category_id: int):
     builder.adjust(1, 1)
     builder.row(InlineKeyboardButton(text='Назад', callback_data='Назад к категориям'))
     return builder.as_markup()
+
+def quantity_button(quantity=1):
+    pass
