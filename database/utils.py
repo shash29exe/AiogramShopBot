@@ -139,7 +139,7 @@ def db_get_user_cart(chat_id):
 
 def db_update_user_cart(price, cart_id, quantity=1):
     """
-        Добавление или изменение товаров в корзине
+        Обновление корзины пользователя
     """
 
     with get_session() as session:
