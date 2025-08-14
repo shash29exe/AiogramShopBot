@@ -109,9 +109,40 @@ def db_get_last_orders(chat_id, limit=10):
 
 def db_get_product(category_id):
     """
-        получение продуктов по категории
+        Получение продуктов по категории
     """
 
     with get_session() as session:
         query = select(Products).where(Products.category_id == category_id)
         return session.scalars(query).all()
+
+
+def db_get_product_by_id(product_id):
+    """
+        Получение продукта по id
+    """
+
+    with get_session() as session:
+        query = select(Products).where(Products.id == product_id)
+        return session.scalar(query)
+
+
+def db_get_user_cart(chat_id):
+    """
+        Получение корзины пользователя по id
+    """
+
+    with get_session() as session:
+        query = select(Carts).join(Users, Carts.user_id == Users.id).where(Users.telegram == chat_id)
+        return session.scalar(query)
+
+
+def db_update_user_cart(price, cart_id, quantity=1):
+    """
+        Добавление или изменение товаров в корзине
+    """
+
+    with get_session() as session:
+        query = update(Carts).where(Carts.id == cart_id).values(total_price=price, total_products=quantity)
+        session.execute(query)
+        session.commit()
