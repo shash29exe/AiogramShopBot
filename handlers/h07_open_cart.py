@@ -1,6 +1,8 @@
 from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery, Message
 
+from database.utils import db_get_cart_items
+
 router = Router()
 
 @router.message(F.text == "🛒 Корзина")
