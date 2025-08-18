@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery, FSInputFile
 from bot_utils.text import text_for_caption
 from database.utils import db_get_product_by_id, db_get_user_cart, db_update_user_cart
 from keyboards.inline_kb import quantity_button
-from keyboards.reply_kb import back_to_main_menu
+from keyboards.reply_kb import back_arrow_kb
 
 router = Router()
 
@@ -28,6 +28,6 @@ async def show_product_detail(callback: CallbackQuery, bot: Bot):
         caption = text_for_caption(product.product_name, product.description, product.price)
         product_image = FSInputFile(path=product.image)
 
-        await bot.send_message(chat_id=chat_id, text='Выберите товар', reply_markup=back_to_main_menu())
+        await bot.send_message(chat_id=chat_id, text='Выберите товар', reply_markup=back_arrow_kb())
 
         await bot.send_photo(chat_id=chat_id, photo=product_image, caption=caption, parse_mode='HTML', reply_markup=quantity_button())

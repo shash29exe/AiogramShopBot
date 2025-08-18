@@ -39,3 +39,19 @@ def show_products(category_id: int):
 
 def quantity_button(quantity=1):
     pass
+
+def cart_action_kb():
+    """
+        Кнопка для действия с корзиной
+    """
+
+    builder = InlineKeyboardBuilder()
+
+    builder.row(
+        InlineKeyboardButton(text='📦 Подтвердить заказ', callback_data='confirm_order'),
+        InlineKeyboardButton(text='❌ Удалить товар', callback_data='delete_product'),
+        InlineKeyboardButton(text='✔️ Добавить товар', callback_data='add_product')
+    )
+
+    builder.adjust(1, 2)
+    builder.as_markup()

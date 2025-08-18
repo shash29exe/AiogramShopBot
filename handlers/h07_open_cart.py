@@ -1,7 +1,8 @@
-from aiogram import Router, F, Bot
+from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message
 
 from database.utils import db_get_cart_items
+from keyboards.inline_kb import cart_action_kb
 
 router = Router()
 
