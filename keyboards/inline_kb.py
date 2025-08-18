@@ -15,7 +15,7 @@ def get_category_menu(chat_id):
     builder = InlineKeyboardBuilder()
     builder.button(
         text=f'Корзина заказа ({total_price if total_price else 0}р.)',
-        callback_data='Корзина заказа'
+        callback_data='Предварительный заказ'
     )
     [builder.button(text=category.category_name, callback_data=f'category_{category.id}')
      for category in categories]

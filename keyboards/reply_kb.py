@@ -44,3 +44,12 @@ def back_to_main_menu():
     builder = ReplyKeyboardBuilder()
     builder.button(text="🏠 Главное меню")
     return builder.as_markup(resize_keyboard=True)
+
+def back_arrow_kb():
+    """
+        Кнопка назад
+    """
+
+    builder = ReplyKeyboardBuilder()
+    builder.button(text="↩️ Назад")
+    return builder.as_markup(resize_keyboard=True)
