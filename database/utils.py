@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 from database.base import engine
 from database.models import Users, Categories, FinallyCarts, Orders, Products
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import update, select, func
+from sqlalchemy import update, select, func, join
 from database.models import Carts
 
 
@@ -146,3 +146,21 @@ def db_update_user_cart(price, cart_id, quantity=1):
         query = update(Carts).where(Carts.id == cart_id).values(total_price=price, total_products=quantity)
         session.execute(query)
         session.commit()
+
+def db_get_cart_items(chat_id):
+    """
+        Получение всех товаров из корзины пользователя
+    """
+
+    with get_session() as session:
+        query = select(FinallyCarts.id,
+                       FinallyCarts.product_name,
+                       FinallyCarts.final_price,
+                       FinallyCarts.quantity,
+                       FinallyCarts.cart_id) \
+        .join(Carts, FinallyCarts.cart_id == Carts.id) \
+        .join(Users, Carts.user_id == Users.id) \
+        .where(Users.telegram == chat_id) \
+        .group_by(FinallyCarts.id)
+
+        return session.execute(query).mappings().all()
