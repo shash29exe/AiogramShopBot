@@ -38,7 +38,19 @@ def show_products(category_id: int):
     return builder.as_markup()
 
 def quantity_button(quantity=1):
-    pass
+    """
+        Кнопка для изменения количества товара в корзине
+    """
+
+    builder = InlineKeyboardBuilder()
+    builder.button(text='➖', callback_data='minus')
+    builder.button(text=str(quantity), callback_data='quantity')
+    builder.button(text='➕', callback_data='plus')
+    builder.button(text='🛒 В корзину', callback_data='put_in_cart')
+    builder.button(text='🔙 Назад', callback_data='back_one_step')
+
+    builder.adjust(3, 1, 1)
+    return builder.as_markup()
 
 def cart_action_kb():
     """
