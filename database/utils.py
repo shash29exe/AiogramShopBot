@@ -164,3 +164,33 @@ def db_get_cart_items(chat_id):
         .group_by(FinallyCarts.id)
 
         return session.execute(query).mappings().all()
+
+
+def db_upsert_cart(cart_id, product_name, total_price, total_products):
+    try:
+        with get_session() as session:
+            item = (
+                session.query(FinallyCarts)
+                .filter_by(cart_id=cart_id, product_name=product_name)
+                .first()
+            )
+
+            if item:
+                item.quantity = total_products
+                item.final_price = total_price
+                session.commit()
+                return 'updated'
+
+            new_item = FinallyCarts(
+                cart_id=cart_id,
+                product_name=product_name,
+                quantity=total_products,
+                final_price=total_price,
+            )
+            session.add(new_item)
+            session.commit()
+            return 'inserted'
+
+    except Exception as e:
+        print("Ошибка в db_upsert_cart:", e)
+        return "error"
