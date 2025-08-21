@@ -194,3 +194,12 @@ def db_upsert_cart(cart_id, product_name, total_price, total_products):
     except Exception as e:
         print("Ошибка в db_upsert_cart:", e)
         return "error"
+
+def db_get_product_by_name(product_name):
+    """
+        Получение продукта по имени
+    """
+
+    with get_session() as session:
+        query = select(Products).where(Products.product_name == product_name)
+        return session.scalar(query)
