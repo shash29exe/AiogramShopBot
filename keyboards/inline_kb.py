@@ -43,9 +43,9 @@ def quantity_button(quantity=1):
     """
 
     builder = InlineKeyboardBuilder()
-    builder.button(text='➖', callback_data='minus')
+    builder.button(text='➖', callback_data='action -')
     builder.button(text=str(quantity), callback_data='quantity')
-    builder.button(text='➕', callback_data='plus')
+    builder.button(text='➕', callback_data='action +')
     builder.button(text='🛒 В корзину', callback_data='put_in_cart')
     builder.button(text='🔙 Назад', callback_data='back_one_step')
 
