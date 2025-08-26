@@ -6,7 +6,7 @@ from handlers.h06_back_button import back
 
 router = Router()
 
-@router.callback_query(F.data == 'put in cart')
+@router.callback_query(F.data == 'put_in_cart')
 async def put_in_cart(callback: CallbackQuery, bot: Bot):
     """
         Обработчик добавления товаров в корзину

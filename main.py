@@ -3,7 +3,7 @@ from aiogram import Bot, Dispatcher
 
 from config import TOKEN
 from handlers import h01_start, h02_contact_user, h03_order, h04_categories, h05_product_detail, h06_back_button, \
-    h07_open_cart, h08_add_to_cart, h09_quantity_items
+    h07_open_cart, h08_add_to_cart, h09_quantity_items, h10_confirm_order
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -17,6 +17,7 @@ dp.include_router(h06_back_button.router)
 dp.include_router(h07_open_cart.router)
 dp.include_router(h08_add_to_cart.router)
 dp.include_router(h09_quantity_items.router)
+dp.include_router(h10_confirm_order.router)
 
 async def main():
     await dp.start_polling(bot)
