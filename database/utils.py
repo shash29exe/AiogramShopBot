@@ -5,6 +5,9 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy import update, select, func, join
 from database.models import Carts
 
+with Session(engine) as session:
+    db_session = session
+
 
 def get_session():
     return Session(engine)
@@ -215,3 +218,18 @@ def db_get_product_by_name(product_name):
     with get_session() as session:
         query = select(Products).where(Products.product_name == product_name)
         return session.scalar(query)
+
+
+def db_get_products_from_final_cart(chat_id):
+    """
+        Получение товаров из финальной корзины
+    """
+
+    with get_session() as session:
+        query = select(FinallyCarts.product_name,
+                       FinallyCarts.quantity,
+                       FinallyCarts.final_price,
+                       FinallyCarts.cart_id
+                       ).join(Carts).join(Users).where(Users.telegram == chat_id)
+
+        return session.execute(query).fetchall()
