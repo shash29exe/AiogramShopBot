@@ -26,9 +26,19 @@ def db_register_user(fullname, chat_id):
         return True
 
 
-def db_update_user_phone(chat_id, phone: str):
+def db_get_phone(chat_id):
     """
         Получение номера телефона
+    """
+
+    with get_session() as session:
+        query = select(Users.phone).where(Users.telegram == chat_id)
+        return session.execute(query).fetchone()[0]
+
+
+def db_update_user_phone(chat_id, phone: str):
+    """
+        Получение и изменение номера телефона
     """
 
     with get_session() as session:
@@ -147,6 +157,7 @@ def db_update_user_cart(price, cart_id, quantity=1):
         session.execute(query)
         session.commit()
 
+
 def db_get_cart_items(chat_id):
     """
         Получение всех товаров из корзины пользователя
@@ -158,10 +169,10 @@ def db_get_cart_items(chat_id):
                        FinallyCarts.final_price,
                        FinallyCarts.quantity,
                        FinallyCarts.cart_id) \
-        .join(Carts, FinallyCarts.cart_id == Carts.id) \
-        .join(Users, Carts.user_id == Users.id) \
-        .where(Users.telegram == chat_id) \
-        .group_by(FinallyCarts.id)
+            .join(Carts, FinallyCarts.cart_id == Carts.id) \
+            .join(Users, Carts.user_id == Users.id) \
+            .where(Users.telegram == chat_id) \
+            .group_by(FinallyCarts.id)
 
         return session.execute(query).mappings().all()
 
@@ -194,6 +205,7 @@ def db_upsert_cart(cart_id, product_name, total_price, total_products):
     except Exception as e:
         print("Ошибка в db_upsert_cart:", e)
         return "error"
+
 
 def db_get_product_by_name(product_name):
     """
