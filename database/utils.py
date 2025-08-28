@@ -1,12 +1,9 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import update, select, func
+from sqlalchemy.exc import IntegrityError
 from database.base import engine
 from database.models import Users, Categories, FinallyCarts, Orders, Products
-from sqlalchemy.exc import IntegrityError
-from sqlalchemy import update, select, func, join
 from database.models import Carts
-
-with Session(engine) as session:
-    db_session = session
 
 
 def get_session():
@@ -14,222 +11,153 @@ def get_session():
 
 
 def db_register_user(fullname, chat_id):
-    """
-        Функция регистрации пользователя
-    """
-
+    """Функция регистрации пользователя"""
     try:
-        with get_session() as session:
-            query = Users(name=fullname, telegram=chat_id)
-            session.add(query)
+        with Session(engine) as session:
+            user = Users(name=fullname, telegram=chat_id)
+            session.add(user)
             session.commit()
-
         return False
     except IntegrityError:
         return True
 
 
 def db_get_phone(chat_id):
-    """
-        Получение номера телефона
-    """
-
-    with get_session() as session:
-        query = select(Users.phone).where(Users.telegram == chat_id)
-        return session.execute(query).fetchone()[0]
+    """Получение номера телефона"""
+    with Session(engine) as session:
+        result = session.execute(select(Users.phone).where(Users.telegram == chat_id)).fetchone()
+        return result[0] if result else None
 
 
 def db_update_user_phone(chat_id, phone: str):
-    """
-        Получение и изменение номера телефона
-    """
-
-    with get_session() as session:
-        query = update(Users).where(Users.telegram == chat_id).values(phone=phone)
-        session.execute(query)
+    """Изменение номера телефона"""
+    with Session(engine) as session:
+        session.execute(update(Users).where(Users.telegram == chat_id).values(phone=phone))
         session.commit()
 
 
 def db_create_user_cart(chat_id):
-    """
-        Создание корзины пользователя
-    """
-
+    """Создание корзины пользователя"""
     try:
-        with get_session() as session:
-            subquery = session.scalar(select(Users).where(Users.telegram == chat_id))
-            query = Carts(user_id=subquery.id)
-            session.add(query)
+        with Session(engine) as session:
+            user = session.scalar(select(Users).where(Users.telegram == chat_id))
+            if not user:
+                return False
+            cart = Carts(user_id=user.id)
+            session.add(cart)
             session.commit()
             return True
-    except IntegrityError:
-        return False
-    except AttributeError:
+    except (IntegrityError, AttributeError):
         return False
 
 
 def db_get_all_categories():
-    """
-        Получение всех категорий
-    """
-
-    with get_session() as session:
-        query = select(Categories)
-        return session.scalars(query).all()
+    """Получение всех категорий"""
+    with Session(engine) as session:
+        return session.scalars(select(Categories)).all()
 
 
 def db_get_finally_price(chat_id):
-    """
-        Получение финальной цены
-    """
-
-    with get_session() as session:
-        cart = (session.query(Carts)
-                .join(Users, Carts.user_id == Users.id).filter(Users.telegram == chat_id).first())
+    """Получение финальной цены корзины"""
+    with Session(engine) as session:
+        cart = session.query(Carts).join(Users).filter(Users.telegram == chat_id).first()
         if not cart:
             return 0
-
-        product_total = (
-            session.query(func.coalesce(func.sum(FinallyCarts.final_price), 0))
-            .filter(FinallyCarts.cart_id == cart.id)
-            .scalar()
-        )
-
-        if product_total == 0:
-            return 0
-
-        return float(product_total)
+        total = session.query(func.coalesce(func.sum(FinallyCarts.total_price), 0)) \
+            .filter(FinallyCarts.cart_id == cart.id).scalar()
+        return float(total) if total else 0
 
 
 def db_get_last_orders(chat_id, limit=10):
-    """
-         Функция получения последних заказов
-    """
-
-    with get_session() as session:
-        orders = (
-            session.query(Orders)
-            .join(Carts, Orders.cart_id == Carts.id)
-            .join(Users, Carts.user_id == Users.id)
-            .filter(Users.telegram == chat_id)
-            .order_by(Orders.id.desc())
-            .limit(limit)
-            .all()
-        )
-
-        return orders
+    """Получение последних заказов"""
+    with Session(engine) as session:
+        return (session.query(Orders)
+                .join(Carts, Orders.cart_id == Carts.id)
+                .join(Users, Carts.user_id == Users.id)
+                .filter(Users.telegram == chat_id)
+                .order_by(Orders.id.desc())
+                .limit(limit)
+                .all())
 
 
 def db_get_product(category_id):
-    """
-        Получение продуктов по категории
-    """
-
-    with get_session() as session:
-        query = select(Products).where(Products.category_id == category_id)
-        return session.scalars(query).all()
+    """Получение продуктов по категории"""
+    with Session(engine) as session:
+        return session.scalars(select(Products).where(Products.category_id == category_id)).all()
 
 
 def db_get_product_by_id(product_id):
-    """
-        Получение продукта по id
-    """
+    """Получение продукта по id"""
+    with Session(engine) as session:
+        return session.scalar(select(Products).where(Products.id == product_id))
 
-    with get_session() as session:
-        query = select(Products).where(Products.id == product_id)
-        return session.scalar(query)
+
+def db_get_product_by_name(product_name):
+    """Получение продукта по имени"""
+    with Session(engine) as session:
+        return session.scalar(select(Products).where(Products.product_name == product_name))
 
 
 def db_get_user_cart(chat_id):
-    """
-        Получение корзины пользователя по id
-    """
-
-    with get_session() as session:
-        query = select(Carts).join(Users, Carts.user_id == Users.id).where(Users.telegram == chat_id)
-        return session.scalar(query)
+    """Получение корзины пользователя по id"""
+    with Session(engine) as session:
+        return session.scalar(select(Carts).join(Users, Carts.user_id == Users.id).where(Users.telegram == chat_id))
 
 
 def db_update_user_cart(price, cart_id, quantity=1):
-    """
-        Обновление корзины пользователя
-    """
-
-    with get_session() as session:
-        query = update(Carts).where(Carts.id == cart_id).values(total_price=price, total_products=quantity)
-        session.execute(query)
+    """Обновление корзины пользователя"""
+    with Session(engine) as session:
+        session.execute(update(Carts).where(Carts.id == cart_id)
+                        .values(total_price=price, total_products=quantity))
         session.commit()
 
 
 def db_get_cart_items(chat_id):
-    """
-        Получение всех товаров из корзины пользователя
-    """
-
-    with get_session() as session:
-        query = select(FinallyCarts.id,
-                       FinallyCarts.product_name,
-                       FinallyCarts.final_price,
-                       FinallyCarts.quantity,
-                       FinallyCarts.cart_id) \
-            .join(Carts, FinallyCarts.cart_id == Carts.id) \
-            .join(Users, Carts.user_id == Users.id) \
-            .where(Users.telegram == chat_id) \
+    """Получение всех товаров из корзины пользователя"""
+    with Session(engine) as session:
+        return session.execute(
+            select(FinallyCarts.id,
+                   FinallyCarts.product_name,
+                   FinallyCarts.total_price,
+                   FinallyCarts.quantity,
+                   FinallyCarts.cart_id)
+            .join(Carts, FinallyCarts.cart_id == Carts.id)
+            .join(Users, Carts.user_id == Users.id)
+            .where(Users.telegram == chat_id)
             .group_by(FinallyCarts.id)
-
-        return session.execute(query).mappings().all()
+        ).mappings().all()
 
 
 def db_upsert_cart(cart_id, product_name, total_price, total_products):
+    """Добавление или обновление товара в корзине"""
     try:
-        with get_session() as session:
-            item = (
-                session.query(FinallyCarts)
-                .filter_by(cart_id=cart_id, product_name=product_name)
-                .first()
-            )
-
+        with Session(engine) as session:
+            item = session.query(FinallyCarts).filter_by(cart_id=cart_id, product_name=product_name).first()
             if item:
                 item.quantity = total_products
-                item.final_price = total_price
+                item.total_price = total_price
                 session.commit()
                 return 'updated'
-
-            new_item = FinallyCarts(
-                cart_id=cart_id,
-                product_name=product_name,
-                quantity=total_products,
-                final_price=total_price,
-            )
+            new_item = FinallyCarts(cart_id=cart_id,
+                                    product_name=product_name,
+                                    quantity=total_products,
+                                    total_price=total_price)
             session.add(new_item)
             session.commit()
             return 'inserted'
-
     except Exception as e:
         print("Ошибка в db_upsert_cart:", e)
         return "error"
 
 
-def db_get_product_by_name(product_name):
-    """
-        Получение продукта по имени
-    """
-
-    with get_session() as session:
-        query = select(Products).where(Products.product_name == product_name)
-        return session.scalar(query)
-
-
 def db_get_products_from_final_cart(chat_id):
-    """
-        Получение товаров из финальной корзины
-    """
-
-    with get_session() as session:
-        query = select(FinallyCarts.product_name,
-                       FinallyCarts.quantity,
-                       FinallyCarts.final_price,
-                       FinallyCarts.cart_id
-                       ).join(Carts).join(Users).where(Users.telegram == chat_id)
-
-        return session.execute(query).fetchall()
+    """Получение товаров из финальной корзины"""
+    with Session(engine) as session:
+        return session.execute(
+            select(FinallyCarts.product_name,
+                   FinallyCarts.quantity,
+                   FinallyCarts.total_price,
+                   FinallyCarts.cart_id)
+            .join(Carts).join(Users)
+            .where(Users.telegram == chat_id)
+        ).fetchall()
