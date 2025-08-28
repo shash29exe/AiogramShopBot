@@ -24,15 +24,11 @@ class FinallyCarts(Base):
     __tablename__ = 'finally_carts'
     id: Mapped[int] = mapped_column(primary_key=True)
     product_name: Mapped[str] = mapped_column(String(50))
-    final_price: Mapped[DECIMAL] = mapped_column(DECIMAL(12, 2))
+    total_price: Mapped[DECIMAL] = mapped_column(DECIMAL(12, 2))
     quantity: Mapped[int]
 
     cart_id: Mapped[int] = mapped_column(ForeignKey('carts.id'), unique=True)
     user_cart: Mapped[Carts] = relationship(back_populates='finally_id')
-
-    # __table_args__ = (
-    #     {}
-    # )
 
     def __str__(self):
         return str(self.id)

@@ -67,3 +67,5 @@ def cart_action_kb():
 
     builder.adjust(1, 2)
     builder.as_markup()
+
+    return builder.as_markup()
