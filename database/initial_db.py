@@ -17,13 +17,13 @@ def initial_db():
     categories = ('Ноутбуки', 'Системные блоки', 'Мониторы')
 
     products = [
-        ('Ноутбуки', 'ASUS', 100000, 'Ноутбук ASUS ZenBook UX431FL', 'media/laptops/asus_zenbook.jpg'),
-        ('Ноутбуки', 'Lenovo', 120000, 'Ноутбук Lenovo Ideapad 330', 'media/laptops/lenovo_ideapad.jpg'),
-        ('Системные блоки', 'ASUS', 150000, 'Системный блок ASUS ROG Strix G15', 'media/pcs/asus_rog.jpg'),
-        ('Системные блоки', 'Lenovo', 170000, 'Системный блок Lenovo Ideapad Gaming 3',
+        ('Ноутбуки', 'Ноутбук ASUS ZenBook', 100000, 'Ноутбук ASUS ZenBook UX431FL', 'media/laptops/asus_zenbook.jpg'),
+        ('Ноутбуки', 'Ноутбук Lenovo Ideapad', 120000, 'Ноутбук Lenovo Ideapad 330', 'media/laptops/lenovo_ideapad.jpg'),
+        ('Системные блоки', 'Системный блок ASUS ROG', 150000, 'Системный блок ASUS ROG Strix G15', 'media/pcs/asus_rog.jpg'),
+        ('Системные блоки', 'Системный блок Lenovo Ideapad', 170000, 'Системный блок Lenovo Ideapad Gaming 3',
          'media/pcs/lenovo_ideapad_gaming.jpg'),
-        ('Мониторы', 'ASUS', 10000, 'Монитор ASUS VG278Q', 'media/monitors/asus_vg278q.jpg'),
-        ('Мониторы', 'Lenovo', 12000, 'Монитор ASUS ROG Swift PG27AQN', 'media/monitors/asus_rog_swift.jpg'),
+        ('Мониторы', 'Монитор ASUS', 10000, 'Монитор ASUS ROG Swift PG27AQN', 'media/monitors/asus_vg278q.jpg'),
+        ('Мониторы', 'Монитор Lenovo', 12000, 'Монитор Lenovo VG278Q', 'media/monitors/asus_rog_swift.jpg'),
     ]
 
     with Session(engine) as session:

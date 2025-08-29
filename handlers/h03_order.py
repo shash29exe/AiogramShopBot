@@ -52,6 +52,11 @@ async def h_history_orders(message: Message):
         return
 
     text = "Ваши заказы:\n\n"
+    total_sum = 0
     for order in orders:
-        text += f'{order.product_name} {order.quantity} шт. {order.final_price}₽\n'
+        text += f'{order.product_name} - {order.quantity}шт. - {order.final_price:.2f}₽\n'
+        total_sum += float(order.final_price)
+
+    text += f'\nОбщая сумма заказов: {total_sum:.2f}₽'
+
     await message.answer(text=text)
