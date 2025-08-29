@@ -37,6 +37,6 @@ async def show_cart(chat_id, send_fn):
     for item in cart_items:
         subtotal = float(item.total_price)
         total += subtotal
-        text += f"{item.product_name} - {item.quantity} - {subtotal:.2f} ₽"
-    text += f"\n\nИтого: {total:.2f} ₽"
+        text += f"{item.product_name} - {item.quantity} шт. - {subtotal:.2f}₽\n"
+    text += f"\nИтого: {total:.2f} ₽"
     await send_fn(text, reply_markup=cart_action_kb())

@@ -205,3 +205,21 @@ def db_clear_finally_cart(chat_id):
             return
         session.execute(delete(FinallyCarts).where(FinallyCarts.cart_id == cart.id))
         session.commit()
+
+def db_save_order_history(chat_id):
+    """Сохранение истории заказов"""
+    with get_session() as session:
+        cart = session.scalar(select(Carts).join(Users).where(Users.telegram == chat_id))
+        if not cart:
+            return
+        final_items = session.query(FinallyCarts).filter_by(cart_id=cart.id).all()
+        for item in final_items:
+            session.add(
+                Orders(
+                    cart_id=cart.id,
+                    product_name=item.product_name,
+                    quantity=item.quantity,
+                    final_price=item.total_price
+                )
+            )
+        session.commit()
