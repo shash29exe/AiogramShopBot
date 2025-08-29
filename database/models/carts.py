@@ -14,7 +14,7 @@ class Carts(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey('users.id'), unique=True)
 
     user_cart: Mapped[Users] = relationship(back_populates='carts')
-    finally_id: Mapped[int] = relationship('FinallyCarts', back_populates='user_cart')
+    finally_id: Mapped[list['FinallyCarts']] = relationship('FinallyCarts', back_populates='user_cart')
 
     def __str__(self):
         return self.id
@@ -27,7 +27,7 @@ class FinallyCarts(Base):
     total_price: Mapped[DECIMAL] = mapped_column(DECIMAL(12, 2))
     quantity: Mapped[int]
 
-    cart_id: Mapped[int] = mapped_column(ForeignKey('carts.id'), unique=True)
+    cart_id: Mapped[int] = mapped_column(ForeignKey('carts.id'))
     user_cart: Mapped[Carts] = relationship(back_populates='finally_id')
 
     def __str__(self):

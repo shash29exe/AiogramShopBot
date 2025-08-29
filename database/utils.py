@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from sqlalchemy import update, select, func
+from sqlalchemy import update, select, func, delete
 from sqlalchemy.exc import IntegrityError
 from database.base import engine
 from database.models import Users, Categories, FinallyCarts, Orders, Products
@@ -128,6 +128,41 @@ def db_get_cart_items(chat_id):
         ).mappings().all()
 
 
+def db_get_cart_item(cart_id: int, product_name: str):
+    """Получение конкретного товара из корзины"""
+    with get_session() as session:
+        return session.query(FinallyCarts).filter_by(cart_id=cart_id, product_name=product_name).first()
+
+
+def db_update_cart_item(cart_id: int, product_name: str, quantity: int, product_price: float):
+    """Обновление количества и цены конкретного товара в корзине"""
+    with get_session() as session:
+        item = session.query(FinallyCarts).filter_by(cart_id=cart_id, product_name=product_name).first()
+        if not item:
+            return False
+        item.quantity = quantity
+        item.total_price = quantity * float(product_price)
+        session.commit()
+        return True
+
+
+def db_update_user_cart_totals(cart_id: int):
+    """Пересчет total_price и total_products корзины"""
+    with get_session() as session:
+        cart = session.query(Carts).filter_by(id=cart_id).first()
+        if not cart:
+            return False
+        totals = session.query(
+            func.coalesce(func.sum(FinallyCarts.total_price), 0),
+            func.coalesce(func.sum(FinallyCarts.quantity), 0)
+        ).filter(FinallyCarts.cart_id == cart_id).first()
+
+        cart.total_price = float(totals[0])
+        cart.total_products = int(totals[1])
+        session.commit()
+        return True
+
+
 def db_upsert_cart(cart_id, product_name, total_price, total_products):
     """Добавление или обновление товара в корзине"""
     try:
@@ -161,3 +196,12 @@ def db_get_products_from_final_cart(chat_id):
             .join(Carts).join(Users)
             .where(Users.telegram == chat_id)
         ).fetchall()
+
+def db_clear_finally_cart(chat_id):
+    """Очистка финальной корзины"""
+    with get_session() as session:
+        cart = session.scalar(select(Carts).join(Users).where(Users.telegram == chat_id))
+        if not cart:
+            return
+        session.execute(delete(FinallyCarts).where(FinallyCarts.cart_id == cart.id))
+        session.commit()
