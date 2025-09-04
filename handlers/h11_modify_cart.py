@@ -2,9 +2,10 @@ from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
-from database.utils import db_get_product_delete
+from database.utils import db_get_product_delete, db_increase_product_quantity
 
 router = Router()
+
 
 @router.callback_query(F.data == "delete_product")
 async def delete_product(callback: CallbackQuery):
@@ -48,3 +49,15 @@ async def add_product(callback: CallbackQuery):
                                      reply_markup=builder.as_markup())
 
     await callback.answer()
+
+
+@router.callback_query(F.data.startswith('increase_'))
+async def increase_quantity(callback: CallbackQuery):
+    """
+        Увеличение количества товаров в заказе
+    """
+
+    cart_id = int(callback.data.split('_')[1])
+    db_increase_product_quantity(cart_id)
+    await callback.answer('Количество товара увеличено')
+    await add_product(callback)
