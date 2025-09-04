@@ -197,6 +197,7 @@ def db_get_products_from_final_cart(chat_id):
             .where(Users.telegram == chat_id)
         ).fetchall()
 
+
 def db_clear_finally_cart(chat_id):
     """Очистка финальной корзины"""
     with get_session() as session:
@@ -205,6 +206,7 @@ def db_clear_finally_cart(chat_id):
             return
         session.execute(delete(FinallyCarts).where(FinallyCarts.cart_id == cart.id))
         session.commit()
+
 
 def db_save_order_history(chat_id):
     """Сохранение истории заказов"""
@@ -224,9 +226,36 @@ def db_save_order_history(chat_id):
             )
         session.commit()
 
+
 def db_get_product_delete(chat_id):
+    """
+        Удаление товара из заказа
+    """
+
     with get_session() as session:
         query = select(FinallyCarts.id, FinallyCarts.product_name) \
-        .join(Carts).join(Users).where(Users.telegram == chat_id)
+            .join(Carts).join(Users).where(Users.telegram == chat_id)
 
         return session.execute(query).fetchall()
+
+
+def db_increase_product_quantity(finally_cart_id):
+    """
+        Увеличение количества товаров в заказе
+    """
+
+    with get_session() as session:
+        item = session.execute(
+            select(FinallyCarts).where(FinallyCarts.id == finally_cart_id)).scalar_one_or_none()
+        if not item:
+            return None
+
+        product = session.execute(
+            select(Products).where(Products.product_name == item.product_name)).scalar_one_or_none()
+        if not product:
+            return None
+
+        item.quantity += 1
+        item.total_price = float(product.price) * item.quantity
+
+        session.commit()
