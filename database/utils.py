@@ -223,3 +223,10 @@ def db_save_order_history(chat_id):
                 )
             )
         session.commit()
+
+def db_get_product_delete(chat_id):
+    with get_session() as session:
+        query = select(FinallyCarts.id, FinallyCarts.product_name) \
+        .join(Carts).join(Users).where(Users.telegram == chat_id)
+
+        return session.execute(query).fetchall()
