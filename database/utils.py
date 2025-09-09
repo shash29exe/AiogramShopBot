@@ -248,14 +248,39 @@ def db_increase_product_quantity(finally_cart_id):
         item = session.execute(
             select(FinallyCarts).where(FinallyCarts.id == finally_cart_id)).scalar_one_or_none()
         if not item:
-            return None
+            return False
 
         product = session.execute(
             select(Products).where(Products.product_name == item.product_name)).scalar_one_or_none()
         if not product:
-            return None
+            return False
 
         item.quantity += 1
         item.total_price = float(product.price) * item.quantity
 
         session.commit()
+        return True
+
+
+def db_decrease_product_quantity(finally_cart_id):
+    with get_session() as session:
+        item = session.execute(
+            select(FinallyCarts).where(FinallyCarts.id == finally_cart_id)).scalar_one_or_none()
+        if not item:
+            return False
+
+        product = session.execute(
+            select(Products).where(Products.product_name == item.product_name)).scalar_one_or_none()
+        if not product:
+            return False
+
+        item.quantity -= 1
+
+        if item.quantity <= 0:
+            session.delete(item)
+
+        else:
+            item.total_price = float(product.price) * item.quantity
+
+        session.commit()
+        return True
