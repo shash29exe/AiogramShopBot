@@ -106,3 +106,4 @@ async def decrease_quantity(callback: CallbackQuery, bot: Bot):
         await callback.message.edit_text(text, reply_markup=keyboard)
 
     await callback.answer('Количество товара уменьшено')
+

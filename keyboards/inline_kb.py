@@ -62,7 +62,8 @@ def cart_action_kb():
     builder.row(
         InlineKeyboardButton(text='📦 Подтвердить заказ', callback_data='confirm_order'),
         InlineKeyboardButton(text='❌ Удалить товар', callback_data='delete_product'),
-        InlineKeyboardButton(text='✔️ Добавить товар', callback_data='add_product')
+        InlineKeyboardButton(text='✔️ Добавить товар', callback_data='add_product'),
+        InlineKeyboardButton(text='🔙 Назад', callback_data='back_one_step')
     )
 
     builder.adjust(1, 2)

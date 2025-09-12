@@ -43,7 +43,11 @@ async def back_one_step(callback: CallbackQuery, bot: Bot):
     message_id = callback.message.message_id
 
     try:
-        await bot.delete_message(chat_id, message_id)
+        for delete_count in range(2):
+            await bot.delete_message(
+                chat_id=chat_id,
+                message_id=message_id - delete_count
+            )
 
     except Exception:
         pass
