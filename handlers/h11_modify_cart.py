@@ -113,5 +113,10 @@ async def back_to_cart_cb(callback: CallbackQuery):
         Функция для кнопки назад из меню добавления/удаления товаров
     """
 
-    await callback.message.edit_text('Корзина', reply_markup=cart_action_kb())
+    user_id = callback.from_user.id
+    cart_items = db_get_cart_items(user_id)
+
+    text = gen_cart_text(cart_items)
+
+    await callback.message.edit_text(text, reply_markup=cart_action_kb())
     await callback.answer()
