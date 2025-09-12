@@ -37,6 +37,7 @@ def show_products(category_id: int):
     builder.row(InlineKeyboardButton(text='Назад', callback_data='Назад к категориям'))
     return builder.as_markup()
 
+
 def quantity_button(quantity=1):
     """
         Кнопка для изменения количества товара в корзине
@@ -51,6 +52,7 @@ def quantity_button(quantity=1):
 
     builder.adjust(3, 1, 1)
     return builder.as_markup()
+
 
 def cart_action_kb():
     """
@@ -70,3 +72,7 @@ def cart_action_kb():
     builder.as_markup()
 
     return builder.as_markup()
+
+
+def settings_kb():
+    pass
