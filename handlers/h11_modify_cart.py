@@ -107,3 +107,11 @@ async def decrease_quantity(callback: CallbackQuery, bot: Bot):
 
     await callback.answer('Количество товара уменьшено')
 
+@router.callback_query(F.data == 'back_to_cart')
+async def back_to_cart_cb(callback: CallbackQuery):
+    """
+        Функция для кнопки назад из меню добавления/удаления товаров
+    """
+
+    await callback.message.edit_text('Корзина', reply_markup=cart_action_kb())
+    await callback.answer()
