@@ -5,3 +5,4 @@ import os
 load_dotenv()
 TOKEN = getenv('TOKEN')
 MANAGER_ID = int(os.getenv('MANAGER_ID'))
+MANAGER_USERNAME = os.getenv('MANAGER_USERNAME')

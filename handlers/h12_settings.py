@@ -1,6 +1,8 @@
 from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery, Message
 
+from keyboards.inline_kb import settings_kb
+
 router = Router()
 
 @router.message(F.text == "⚙ Настройки")
