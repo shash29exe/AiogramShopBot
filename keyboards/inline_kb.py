@@ -87,3 +87,16 @@ def settings_kb():
     builder.adjust(1, 1, 1)
 
     return builder.as_markup()
+
+def confirm_delete_kb():
+    """
+        Кнопка подтверждения удаления товара:
+    """
+
+    builder = InlineKeyboardBuilder()
+    builder.button(text='❌ Нет', callback_data='back_to_settings')
+    builder.button(text='✅ Да', callback_data='confirm_delete')
+
+    builder.adjust(1, 1)
+
+    return builder.as_markup()
