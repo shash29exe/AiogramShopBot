@@ -284,3 +284,7 @@ def db_decrease_product_quantity(finally_cart_id):
 
         session.commit()
         return True
+
+
+def db_delete_user_by_telegram_id(chat_id):
+    pass
