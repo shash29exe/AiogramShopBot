@@ -38,7 +38,7 @@ async def change_quantity_products(callback: CallbackQuery, bot: Bot):
     elif action == '-' and current_quantity > 1:
         new_quantity -= 1
     elif action == '-' and current_quantity <= 1:
-        await callback.answer("В корзине минимум 1 товар, удаление невозможно !", show_alert=True)
+        await callback.answer("В корзине минимум 1 товар, удаление невозможно!", show_alert=True)
         return
 
     db_update_cart_item(user_cart.id, product.product_name, new_quantity, float(product.price))

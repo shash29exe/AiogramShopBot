@@ -3,7 +3,7 @@ from aiogram.types import CallbackQuery, Message
 
 from config import MANAGER_ID
 from database.utils import db_delete_user_by_telegram_id
-from keyboards.inline_kb import settings_kb, confirm_delete_kb
+from keyboards.inline_kb import settings_kb, confirm_delete_kb, change_language_kb
 from keyboards.reply_kb import start_kb
 
 router = Router()
@@ -18,8 +18,9 @@ async def settings(message: Message):
     await message.answer(text="⚙ Настройки", reply_markup=settings_kb())
 
 
-async def change_language():
-    pass
+@router.callback_query(F.data == 'change_language')
+async def change_language(callback: CallbackQuery):
+    await callback.message.edit_text('Выбор языка', reply_markup=change_language_kb())
 
 
 @router.callback_query(F.data == 'delete_account')
