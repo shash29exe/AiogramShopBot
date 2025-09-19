@@ -287,4 +287,25 @@ def db_decrease_product_quantity(finally_cart_id):
 
 
 def db_delete_user_by_telegram_id(chat_id):
-    pass
+    """
+        Удаление пользователя по его id телеграма с сохранённым номером телефона.
+    """
+
+    try:
+        with get_session() as session:
+            user = session.scalar(select(Users).where(Users.telegram == chat_id))
+            phone = user.phone
+            cart = session.scalar(select(Carts).where(Carts.user_id == user.id))
+
+            if cart:
+                session.execute(delete(Orders).where(Orders.cart_id == cart.id))
+                session.execute(delete(FinallyCarts).where(FinallyCarts.cart_id == cart.id))
+                session.execute(delete(Carts).where(Carts.id == cart.id))
+
+            session.execute(delete(Users).where(Users.id == user.id))
+
+            session.commit()
+            return True, phone
+
+    except Exception:
+        return False, None
