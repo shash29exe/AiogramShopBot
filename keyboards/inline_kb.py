@@ -88,6 +88,7 @@ def settings_kb():
 
     return builder.as_markup()
 
+
 def confirm_delete_kb():
     """
         Кнопка подтверждения удаления товара:
@@ -98,5 +99,20 @@ def confirm_delete_kb():
     builder.button(text='✅ Да', callback_data='confirm_delete')
 
     builder.adjust(1, 1)
+
+    return builder.as_markup()
+
+
+def change_language_kb():
+    """
+        Кнопка выбора языка
+    """
+
+    builder = InlineKeyboardBuilder()
+    builder.button(text='🇷🇺 Русский', callback_data='ru')
+    builder.button(text='🇺🇸 English', callback_data='en')
+    builder.button(text='🔙 Назад', callback_data='back_to_settings')
+
+    builder.adjust(2, 1)
 
     return builder.as_markup()

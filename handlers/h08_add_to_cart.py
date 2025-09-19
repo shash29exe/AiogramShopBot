@@ -1,7 +1,7 @@
 from aiogram import Bot, F, Router
 from aiogram.types import CallbackQuery
 
-from database.utils import db_get_user_cart, db_upsert_cart
+from database.utils import db_get_user_cart, db_upsert_cart, db_get_product_by_name
 from handlers.h06_back_button import back
 
 router = Router()
@@ -25,6 +25,8 @@ async def add_to_cart(callback: CallbackQuery, bot: Bot):
         return
 
     await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+    product = db_get_product_by_name(product_name)
 
     result = db_upsert_cart(
         cart_id=cart.id,
