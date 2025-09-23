@@ -5,6 +5,8 @@ from database.base import engine
 from database.models import Users, Categories, FinallyCarts, Orders, Products
 from database.models import Carts
 
+with Session(engine) as session:
+    db_session = session
 
 def get_session():
     return Session(engine)
@@ -163,24 +165,33 @@ def db_update_user_cart_totals(cart_id: int):
         return True
 
 
-def db_upsert_cart(cart_id, product_name, total_price, total_products):
-    """Добавление или обновление товара в корзине"""
+def db_upsert_cart(cart_id, product_name, quantity=1):
     try:
         with Session(engine) as session:
+            product = session.scalar(select(Products).where(Products.product_name == product_name))
+            if not product:
+                return "error"
+
             item = session.query(FinallyCarts).filter_by(cart_id=cart_id, product_name=product_name).first()
+
             if item:
-                item.quantity = total_products
-                item.total_price = total_price
+                item.quantity += quantity
+                item.total_price = float(product.price) * item.quantity
                 session.commit()
-                return 'updated'
-            new_item = FinallyCarts(cart_id=cart_id,
-                                    product_name=product_name,
-                                    quantity=total_products,
-                                    total_price=total_price)
+                return "updated"
+
+            new_item = FinallyCarts(
+                cart_id=cart_id,
+                product_name=product_name,
+                quantity=quantity,
+                total_price=float(product.price) * quantity
+            )
             session.add(new_item)
             session.commit()
-            return 'inserted'
+            return "inserted"
+
     except Exception as e:
+        session.rollback()
         print("Ошибка в db_upsert_cart:", e)
         return "error"
 
