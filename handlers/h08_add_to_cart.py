@@ -1,7 +1,7 @@
 from aiogram import Router, F, Bot
 from aiogram.types import CallbackQuery
 
-from database.utils import db_get_user_cart, db_upsert_cart, db_update_user_cart_totals
+from database.utils import db_get_user_cart, db_upsert_cart, db_update_user_cart_totals, db_get_product_by_name
 from handlers.h06_back_button import back
 
 router = Router()
@@ -25,16 +25,20 @@ async def add_to_cart(callback: CallbackQuery, bot: Bot):
 
     await bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
-    quantity_to_add = 2
+    product = db_get_product_by_name(product_name)
+
+    if not product:
+        await bot.send_message(chat_id=chat_id, text="Товар не найден!")
+        return
+
+    quantity_to_add = 1
 
     result = db_upsert_cart(
         cart_id=cart.id,
         product_name=product_name,
-        quantity=quantity_to_add
+        quantity=quantity_to_add,
+        unit_price=float(product.price)
     )
-
-    if result in ["inserted", "updated"]:
-        db_update_user_cart_totals(cart.id)
 
     match result:
         case "inserted":

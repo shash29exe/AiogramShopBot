@@ -165,18 +165,14 @@ def db_update_user_cart_totals(cart_id: int):
         return True
 
 
-def db_upsert_cart(cart_id, product_name, quantity=1):
+def db_upsert_cart(cart_id, product_name, quantity=1, unit_price=0.0):
     try:
         with Session(engine) as session:
-            product = session.scalar(select(Products).where(Products.product_name == product_name))
-            if not product:
-                return "error"
-
             item = session.query(FinallyCarts).filter_by(cart_id=cart_id, product_name=product_name).first()
 
             if item:
                 item.quantity += quantity
-                item.total_price = float(product.price) * item.quantity
+                item.total_price = unit_price * item.quantity
                 session.commit()
                 return "updated"
 
@@ -184,7 +180,7 @@ def db_upsert_cart(cart_id, product_name, quantity=1):
                 cart_id=cart_id,
                 product_name=product_name,
                 quantity=quantity,
-                total_price=float(product.price) * quantity
+                total_price=unit_price * quantity
             )
             session.add(new_item)
             session.commit()
