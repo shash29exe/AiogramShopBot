@@ -13,6 +13,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -90,3 +91,39 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+JAZZMIN_SETTINGS = {
+
+    "search_model": ["admin_panel.User", "admin_panel.Category", "admin_panel.Product"],
+
+    "topmenu_links": [
+        {"name": "Главная", "url": "admin:index", "permissions": ["auth.view_user"]},
+    ],
+
+    "icons": {
+        "admin_panel.Users": "fas fa-user",
+        "admin_panel.Categories": "fas fa-tag",
+        "admin_panel.Products": "fas fa-cookie",
+
+    },
+    "show_sidebar": True,
+        "navigation_expanded": True,
+        "hide_apps": [],
+        "order_with_respect_to": ["admin_panel", "auth"],
+    }
+
+JAZZMIN_UI_TWEAKS = {
+    # darkly, cyborg, journal, lux, minty, solar, etc, flatly
+    "theme": "darkly",
+
+    # "navbar_small_text": False,
+    # "footer_small_text": False,
+    # "body_small_text": False,
+    # "brand_color": "navbar-blue",
+    # "accent": "accent-blue",
+    "navbar": "navbar-black navbar-black",
+    # "no_navbar_border": False,
+    # "sidebar": "sidebar-light-blue",
+    # "sidebar_nav_small_text": False,
+}
+
