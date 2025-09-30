@@ -6,6 +6,9 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+MEIDA_ROOT = r'C:\Users\Shash29\PycharmProjects\AiogramShopBot\media'
+MEDIA_URL = '/media/'
+
 SECRET_KEY = 'django-insecure-xr)i^ij2u#a7+&hx5t&(y!b5pa)0psl6w1l+3s=5+ttkqwk$fu'
 
 DEBUG = True
@@ -20,7 +23,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'admin_panel'
+    'admin_panel',
+    "django_cleanup.apps.CleanupConfig",
 ]
 
 MIDDLEWARE = [

@@ -30,7 +30,7 @@ class Categories(models.Model):
 class Products(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
     description = models.TextField()
-    image = models.ImageField(upload_to='media/', null=True, blank=True)
+    image = models.ImageField(upload_to='', null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(Categories, on_delete=models.CASCADE, related_name='products')
 

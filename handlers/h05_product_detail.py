@@ -6,6 +6,9 @@ from database.utils import db_get_product_by_id, db_get_user_cart, db_update_use
 from keyboards.inline_kb import quantity_button, get_category_menu
 from keyboards.reply_kb import back_arrow_kb
 
+import os
+from config import MEDIA_ROOT
+
 router = Router()
 
 @router.callback_query(F.data.contains('product_'))
@@ -26,7 +29,8 @@ async def show_product_detail(callback: CallbackQuery, bot: Bot):
     if user_cart:
         db_update_user_cart(price=product.price, cart_id=user_cart.id)
         caption = text_for_caption(product.product_name, product.description, product.price)
-        product_image = FSInputFile(path=product.image)
+        file_path = os.path.join(MEDIA_ROOT, product.image)
+        product_image = FSInputFile(path=file_path)
 
         await bot.send_message(chat_id=chat_id, text='Выберите товар', reply_markup=back_arrow_kb())
 
