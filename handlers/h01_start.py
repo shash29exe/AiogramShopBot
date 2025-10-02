@@ -1,7 +1,6 @@
-from aiogram import Router
+from aiogram import Router, F
 from aiogram.types import Message, FSInputFile
 from aiogram.filters import CommandStart
-from aiogram.filters.text import Text
 
 from database.utils import db_register_user
 from handlers.h02_contact_user import get_main_menu
@@ -26,7 +25,7 @@ async def start(message: Message):
     )
 
 
-@router.message(Text('Привет'))
+@router.message(F.text == 'Привет')
 async def handle_start_button(message: Message):
     """
         Реакция на нажатие кнопки "Привет"

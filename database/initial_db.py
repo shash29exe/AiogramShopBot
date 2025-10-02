@@ -12,7 +12,7 @@ def initial_db():
         conn.commit()
 
     print('Создание базы данных...')
-    Base.metadata.create_all(engine)
+    # Base.metadata.create_all(engine)
 
     categories = ('Ноутбуки', 'Системные блоки', 'Мониторы')
 
