@@ -13,3 +13,9 @@ venv/
 # ▶️ Md and CSV
 *.md
 !README.md
+
+# Migrations
+admin_for_bot/admin_panel/migrations/
+
+# Media
+media/
