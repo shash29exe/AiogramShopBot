@@ -20,3 +20,6 @@ admin_for_bot/admin_panel/migrations/
 
 # Media
 media/
+
+# Logs
+logs/

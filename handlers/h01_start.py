@@ -5,6 +5,7 @@ from aiogram.filters import CommandStart
 from database.utils import db_register_user
 from handlers.h02_contact_user import get_main_menu
 from keyboards.reply_kb import start_kb, phone_kb
+from log_action import log_register_user
 
 router = Router()
 
@@ -42,7 +43,7 @@ async def register(message: Message):
     chat_id = message.chat.id
     full_name = message.from_user.full_name
 
-    print(message.from_user)
+    log_register_user(username=full_name, user_id=chat_id)
 
     if db_register_user(full_name, chat_id):
         await message.answer(text=f'Привет👋')
