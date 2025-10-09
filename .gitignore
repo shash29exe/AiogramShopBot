@@ -9,6 +9,7 @@ pycache/
 venv/
 .idea/
 .env
+.env.docker
 
 # ▶️ Md and CSV
 *.md
