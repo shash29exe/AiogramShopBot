@@ -1,8 +1,8 @@
 from pathlib import Path
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,13 +56,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'admin_for_bot.wsgi.application'
 
+
+# TODO: Локально нужно вернуть dotenv и хост.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME', 'postgres'),
         'USER': os.getenv('DB_USER', 'postgres'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'postgres'),
-        'HOST': os.getenv('DB_ADDRESS'),
+        'HOST':'db',
         'PORT': os.getenv('DB_PORT', '5432'),
     }
 }
