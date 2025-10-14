@@ -2,6 +2,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 
 from config import TOKEN
+from database.initial_db import initial_db
 from handlers import h01_start, h02_contact_user, h03_order, h04_categories, h05_product_detail, h06_back_button, \
     h07_open_cart, h08_add_to_cart, h09_quantity_items, h10_confirm_order, h11_modify_cart, h12_settings
 
@@ -22,6 +23,7 @@ dp.include_router(h11_modify_cart.router)
 dp.include_router(h12_settings.router)
 
 async def main():
+    initial_db()
     await dp.start_polling(bot)
 
 if __name__ == '__main__':
